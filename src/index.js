@@ -1,31 +1,48 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { fetchWeatherData } from "./api-caller.js";
+import { fetchWeatherData, fetchLocationData } from "./api-caller.js";
 import { LocationForm } from "./location-form.js";
 import { WeatherDisplay } from "./weather-display.js";
+
+import "./style.css";
+import loadingImg from "./images/loading.gif";
 
 class App extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = { loading: false };
 		this.getData = this.getData.bind(this);
 	}
 
 	render() {
 		return (
-			<div>
+			<div id="app">
 				<LocationForm getData={this.getData} />
-				{this.state.weatherData ? (
-					<WeatherDisplay data={this.state.weatherData} />
+				{this.state.loading ? (
+					<img class="loading" src={loadingImg} alt="" />
+				) : this.state.apiData ? (
+					<WeatherDisplay data={this.state.apiData} />
+				) : this.state.badLocation ? (
+					<div id="location-not-found">Location not found.</div>
 				) : null}
 			</div>
 		);
 	}
 
 	async getData(location) {
-		const weatherData = await fetchWeatherData(location);
-		this.setState({ weatherData });
+		this.setState({ loading: true });
+		try {
+			const locationData = await fetchLocationData(location);
+			const weatherData = await fetchWeatherData(locationData.geometry);
+			this.setState({
+				apiData: { weatherData, locationData },
+				loading: false,
+				badLocation: false,
+			});
+		} catch (error) {
+			this.setState({ loading: false, apiData: null, badLocation: true });
+		}
 	}
 }
 

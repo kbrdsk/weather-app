@@ -11,36 +11,24 @@ export class LocationForm extends React.Component {
 
 	render() {
 		return (
-			<form onSubmit={this.handleSubmit}>
+			<form id="search" onSubmit={this.handleSubmit}>
 				<input
 					type="text"
 					onChange={this.handleChange}
-					name="city"
-					placeholder="City"
+					name="location"
+					placeholder="Location"
 				/>
-				<input
-					type="text"
-					onChange={this.handleChange}
-					name="state"
-					placeholder="State"
-				/>
-				<input
-					type="text"
-					onChange={this.handleChange}
-					name="zip"
-					placeholder="Zip"
-				/>
-				<input type="submit" value="Go" />
+				<input type="submit" value="" />
 			</form>
 		);
 	}
 
 	handleSubmit(event) {
-		this.props.getData(this.state);
+		this.props.getData(this.state.location);
 		event.preventDefault();
 	}
 
 	handleChange(event) {
-		this.setState({ [event.target.name]: event.target.value });
+		this.setState({ location: event.target.value });
 	}
 }
